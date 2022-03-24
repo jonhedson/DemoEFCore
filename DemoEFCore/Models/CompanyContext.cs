@@ -18,6 +18,14 @@ namespace DemoEFCore.Models
         public DbSet<Information> Information { get; set; }
         public DbSet<Client> Clients { get; set; }
 
+        public DbSet<City> Cities { get; set; }
+
+        public DbSet<Country> Countries { get; set; }
+
+        public DbSet<Teacher> Teachers { get; set; }
+        public DbSet<Student> Students { get; set; }
+        public DbSet<TeacherStudent> TeacherStudent { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             
@@ -25,36 +33,26 @@ namespace DemoEFCore.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Department>(entity =>
-            {
-                entity.Property(e => e.Name)
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-            });
 
-            modelBuilder.Entity<Employee>(entity =>
-            {
-                entity.Property(e => e.Designation)
-                    .IsRequired()
-                    .HasMaxLength(25)
-                    .IsUnicode(false);
+            modelBuilder.Entity<TeacherStudent>()
+                .HasKey(t => new { t.StudentId, t.TeacherId });
 
-                entity.Property(e => e.Name)
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .IsUnicode(false);
+            modelBuilder.Entity<TeacherStudent>()
+            .HasOne(t => t.Student)
+            .WithMany(t => t.TeacherStudent)
+            .HasForeignKey(t => t.StudentId);
 
-                entity.HasOne(d => d.Department)
-                    .WithMany(p => p.Employee)
-                    .HasForeignKey(d => d.DepartmentId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Employee_Department");
-            });
+            modelBuilder.Entity<TeacherStudent>()
+            .HasOne(t => t.Teacher)
+            .WithMany(t => t.TeacherStudent)
+            .HasForeignKey(t => t.TeacherId);
 
-            OnModelCreatingPartial(modelBuilder);
+
+
+
+
+
         }
 
-        partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }

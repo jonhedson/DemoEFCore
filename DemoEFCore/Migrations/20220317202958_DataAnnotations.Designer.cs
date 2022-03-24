@@ -4,14 +4,16 @@ using DemoEFCore.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DemoEFCore.Migrations
 {
     [DbContext(typeof(CompanyContext))]
-    partial class CompanyContextModelSnapshot : ModelSnapshot
+    [Migration("20220317202958_DataAnnotations")]
+    partial class DataAnnotations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -26,44 +28,18 @@ namespace DemoEFCore.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("CityInformationId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("CountryId")
+                    b.Property<int?>("FKid")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnName("CityName")
+                        .HasColumnType("varchar(25)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CityInformationId")
-                        .IsUnique();
+                    b.HasIndex("FKid");
 
-                    b.HasIndex("CountryId");
-
-                    b.ToTable("Cities");
-                });
-
-            modelBuilder.Entity("DemoEFCore.Models.CityInformation", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("MayorName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("OtherName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Population")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("CityInformation");
+                    b.ToTable("TBL_City");
                 });
 
             modelBuilder.Entity("DemoEFCore.Models.Client", b =>
@@ -92,17 +68,18 @@ namespace DemoEFCore.Migrations
 
             modelBuilder.Entity("DemoEFCore.Models.Country", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("KeyId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(20)")
+                        .HasMaxLength(20);
 
-                    b.HasKey("Id");
+                    b.HasKey("KeyId");
 
-                    b.ToTable("Countries");
+                    b.ToTable("TBL_Country");
                 });
 
             modelBuilder.Entity("DemoEFCore.Models.Department", b =>
@@ -114,7 +91,10 @@ namespace DemoEFCore.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("varchar(50)")
+                        .HasMaxLength(50)
+                        .IsUnicode(false);
 
                     b.HasKey("Id");
 
@@ -132,10 +112,16 @@ namespace DemoEFCore.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Designation")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("varchar(25)")
+                        .HasMaxLength(25)
+                        .IsUnicode(false);
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("varchar(100)")
+                        .HasMaxLength(100)
+                        .IsUnicode(false);
 
                     b.HasKey("Id");
 
@@ -168,62 +154,11 @@ namespace DemoEFCore.Migrations
                     b.ToTable("Information");
                 });
 
-            modelBuilder.Entity("DemoEFCore.Models.Student", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Students");
-                });
-
-            modelBuilder.Entity("DemoEFCore.Models.Teacher", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Teachers");
-                });
-
-            modelBuilder.Entity("DemoEFCore.Models.TeacherStudent", b =>
-                {
-                    b.Property<int>("StudentId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TeacherId")
-                        .HasColumnType("int");
-
-                    b.HasKey("StudentId", "TeacherId");
-
-                    b.HasIndex("TeacherId");
-
-                    b.ToTable("TeacherStudent");
-                });
-
             modelBuilder.Entity("DemoEFCore.Models.City", b =>
                 {
-                    b.HasOne("DemoEFCore.Models.CityInformation", "CityInformation")
-                        .WithOne("City")
-                        .HasForeignKey("DemoEFCore.Models.City", "CityInformationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DemoEFCore.Models.Country", null)
-                        .WithMany("City")
-                        .HasForeignKey("CountryId");
+                    b.HasOne("DemoEFCore.Models.Country", "Country")
+                        .WithMany()
+                        .HasForeignKey("FKid");
                 });
 
             modelBuilder.Entity("DemoEFCore.Models.Employee", b =>
@@ -231,22 +166,7 @@ namespace DemoEFCore.Migrations
                     b.HasOne("DemoEFCore.Models.Department", "Department")
                         .WithMany("Employee")
                         .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("DemoEFCore.Models.TeacherStudent", b =>
-                {
-                    b.HasOne("DemoEFCore.Models.Student", "Student")
-                        .WithMany("TeacherStudent")
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DemoEFCore.Models.Teacher", "Teacher")
-                        .WithMany("TeacherStudent")
-                        .HasForeignKey("TeacherId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("FK_Employee_Department")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

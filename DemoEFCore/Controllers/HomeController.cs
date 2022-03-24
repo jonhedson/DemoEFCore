@@ -14,6 +14,21 @@ namespace DemoEFCore.Controllers
             context = cc;
         }
 
+        public string otm()
+        {
+            
+                Country country = new Country()
+                {
+                    Id = 1
+                };
+
+                context.Remove(country);
+                context.SaveChangesAsync();
+          
+
+            return "Record Inserted";
+        }
+
         public string Index()
         {
             var dept = new Department()

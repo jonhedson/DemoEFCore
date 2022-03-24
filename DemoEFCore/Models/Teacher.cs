@@ -5,13 +5,11 @@ using System.Threading.Tasks;
 
 namespace DemoEFCore.Models
 {
-    public class Client
+    public class Teacher
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public string Country { get; set; }
-        public string TelephoneNo { get; set; }
-        public string Email { get; set; }
-        
+
+        public IList<TeacherStudent> TeacherStudent { get; set; }
     }
 }
